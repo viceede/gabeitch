@@ -1,6 +1,6 @@
 import pygame
 from settings import *
-from classes import Player, Platform, Enemy, Coin
+from classes import Player, Platform, Enemy, Coin, Tree, Rock
 from utils import show_message
 from utils.sprite_sheet import ResourceLoader
 
@@ -15,6 +15,7 @@ def create_game_objects():
     platforms = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
     coins = pygame.sprite.Group()
+    objects = pygame.sprite.Group()  # Группа для объектов (деревья, камни)
     all_sprites = pygame.sprite.Group()
 
     # земля (пол)
@@ -22,30 +23,39 @@ def create_game_objects():
     platforms.add(ground)
     all_sprites.add(ground)
 
-    # Платформы - все подняты над землей, чтобы не касаться пола
+    # Платформы
     level_platforms = [
-        # x, y, ширина, тип
-        Platform(200, 340, 120, 20),  # Поднял с 360 → 340
-        Platform(380, 280, 120, 20),  # Поднял с 300 → 280
-        Platform(560, 240, 120, 20),  # Поднял с 260 → 240
-        Platform(350, 400, 80, 20),  # Поднял с 420 → 400
+        Platform(200, 340, 120, 20),
+        Platform(380, 280, 120, 20),
+        Platform(560, 240, 120, 20),
+        Platform(350, 400, 80, 20),
     ]
 
     for p in level_platforms:
         platforms.add(p)
         all_sprites.add(p)
 
+    # Дерево на второй платформе (380, 280)
+    tree = Tree(400, 280)  # x=400, y=280
+    objects.add(tree)
+    all_sprites.add(tree)
+
+    # Камень на третьей платформе (560, 240)
+    rock = Rock(580, 240)  # x=580, y=240
+    objects.add(rock)
+    all_sprites.add(rock)
+
     # враг
     enemy = Enemy(420, HEIGHT - GROUND_HEIGHT - 40, 380, 560)
     enemies.add(enemy)
     all_sprites.add(enemy)
 
-    # монеты - скорректированы под новые позиции платформ
+    # монеты
     coin_positions = [
-        (230, 310),  # Монета на первой платформе (было 330)
-        (410, 250),  # Монета на второй платформе (было 270)
-        (590, 210),  # Монета на третьей платформе (было 230)
-        (380, 370),  # Монета на четвертой платформе (было 390)
+        (230, 310),  # Монета на первой платформе
+        (410, 250),  # Монета на второй платформе (рядом с деревом)
+        (590, 210),  # Монета на третьей платформе (рядом с камнем)
+        (380, 370),  # Монета на четвертой платформе
     ]
 
     for cx, cy in coin_positions:
@@ -55,7 +65,7 @@ def create_game_objects():
 
     all_sprites.add(player)
 
-    return player, platforms, enemies, coins, all_sprites
+    return player, platforms, enemies, coins, objects, all_sprites
 
 
 def game_loop():
@@ -66,7 +76,7 @@ def game_loop():
     resources = ResourceLoader()
     background = resources.get_background('game')
 
-    player, platforms, enemies, coins, all_sprites = create_game_objects()
+    player, platforms, enemies, coins, objects, all_sprites = create_game_objects()
 
     victory = False
     game_over = False
@@ -83,8 +93,9 @@ def game_loop():
                 if event.key == pygame.K_r and (game_over or victory):
                     return "restart"
 
-        # Обновление анимаций монет
+        # Обновление анимаций
         coins.update()
+        objects.update()  # Обновляем объекты
 
         # Проверка условий победы
         if len(enemies) == 0 and not victory and player.lives > 0:
@@ -134,7 +145,6 @@ def game_loop():
         total_text = hud_font.render(f"Очки: {player.total_score}", True, BLACK)
         menu_hint = hud_font.render("ESC", True, BLACK)
 
-        # Полупрозрачный фон для HUD
         hud_bg = pygame.Surface((180, 100))
         hud_bg.set_alpha(180)
         hud_bg.fill((255, 255, 255))
@@ -146,7 +156,6 @@ def game_loop():
         WIN.blit(enemies_left, (10, 68))
         WIN.blit(total_text, (10, 88))
 
-        # ESC подсказка
         menu_hint_bg = pygame.Surface((45, 20))
         menu_hint_bg.set_alpha(180)
         menu_hint_bg.fill((255, 255, 255))

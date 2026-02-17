@@ -4,12 +4,13 @@ from settings import *
 
 
 class ResourceLoader:
-    """Класс для загрузки и хранения всех ресурсов (спрайты, фоны и текстуры)"""
+    """Класс для загрузки и хранения всех ресурсов"""
 
     _instance = None
     _sprites = {}
     _backgrounds = {}
     _textures = {}
+    _objects = {}  # Словарь для объектов (деревья, камни и т.д.)
 
     def __new__(cls):
         if cls._instance is None:
@@ -22,10 +23,10 @@ class ResourceLoader:
         self._load_all_sprites()
         self._load_all_backgrounds()
         self._load_all_textures()
+        self._load_all_objects()  # Загружаем объекты
 
     def _load_all_sprites(self):
         """Загружает все спрайты персонажей"""
-        # Загрузка спрайтов игрока
         player_path = os.path.join(SPRITES_PATH, 'player')
         self._sprites['player'] = {
             'idle': self._load_animation(player_path, 'player_idle', 2, (PLAYER_WIDTH, PLAYER_HEIGHT)),
@@ -34,14 +35,12 @@ class ResourceLoader:
             'fall': self._load_image(os.path.join(player_path, 'player_fall.png'), (PLAYER_WIDTH, PLAYER_HEIGHT))
         }
 
-        # Загрузка спрайтов врага
         enemy_path = os.path.join(SPRITES_PATH, 'enemy')
         self._sprites['enemy'] = {
             'idle': self._load_animation(enemy_path, 'enemy_idle', 2, (40, 40)),
             'walk': self._load_animation(enemy_path, 'enemy_walk', 2, (40, 40))
         }
 
-        # Загрузка спрайтов монет
         coin_path = os.path.join(SPRITES_PATH, 'coin')
         self._sprites['coin'] = self._load_animation(coin_path, 'coin', 4, (20, 20))
 
@@ -58,39 +57,36 @@ class ResourceLoader:
         """Загружает все текстуры для платформ и земли"""
         platforms_path = os.path.join(SPRITES_PATH, 'platforms')
 
-        # Текстуры земли
         self._textures['ground'] = self._load_image(os.path.join(platforms_path, 'ground.png'))
         self._textures['ground_top'] = self._load_image(os.path.join(platforms_path, 'ground_top.png'))
-
-        # Текстуры платформ
         self._textures['platform'] = self._load_image(os.path.join(platforms_path, 'platform.png'))
         self._textures['platform_left'] = self._load_image(os.path.join(platforms_path, 'platform_left.png'))
         self._textures['platform_mid'] = self._load_image(os.path.join(platforms_path, 'platform_mid.png'))
         self._textures['platform_right'] = self._load_image(os.path.join(platforms_path, 'platform_right.png'))
 
+    def _load_all_objects(self):
+        """Загружает все объекты (деревья, камни и т.д.)"""
+        objects_path = os.path.join(SPRITES_PATH, 'objects')
+
+        # Загружаем дерево
+        tree_path = os.path.join(objects_path, 'tree.png')
+        self._objects['tree'] = self._load_image(tree_path, scale=None)
+
+        # Загружаем камень
+        rock_path = os.path.join(objects_path, 'rock.png')
+        self._objects['rock'] = self._load_image(rock_path, scale=None)
+
     def _load_image(self, path, scale=None):
-        """Загружает одно изображение"""
+        """Загружает одно изображение с сохранением прозрачности"""
         try:
             if os.path.exists(path):
                 image = pygame.image.load(path).convert_alpha()
             else:
                 print(f"Предупреждение: Не удалось загрузить {path}")
-                # Создаем цветную заглушку
-                if 'ground' in path:
-                    image = pygame.Surface((40, 40))
-                    image.fill(BLACK)
-                elif 'platform' in path:
-                    image = pygame.Surface((40, 20))
-                    image.fill(GREEN)
-                else:
-                    image = pygame.Surface((40, 40))
-                    image.fill(RED)
-                return image
+                return None
         except pygame.error:
             print(f"Предупреждение: Ошибка загрузки {path}")
-            image = pygame.Surface((40, 40))
-            image.fill(RED)
-            return image
+            return None
 
         if scale:
             image = pygame.transform.scale(image, scale)
@@ -102,11 +98,12 @@ class ResourceLoader:
         for i in range(1, count + 1):
             path = os.path.join(folder, f"{base_name}_{i}.png")
             frame = self._load_image(path, scale)
-            frames.append(frame)
+            if frame:
+                frames.append(frame)
 
         if not frames:
-            surf = pygame.Surface((40, 40))
-            surf.fill(RED)
+            surf = pygame.Surface((40, 40), pygame.SRCALPHA)
+            surf.fill((200, 50, 50, 255))
             frames = [surf]
 
         return frames
@@ -130,3 +127,7 @@ class ResourceLoader:
     def get_texture(self, name):
         """Возвращает текстуру по имени"""
         return self._textures.get(name)
+
+    def get_object_texture(self, name):
+        """Возвращает текстуру объекта по имени"""
+        return self._objects.get(name)
