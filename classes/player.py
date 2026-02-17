@@ -1,23 +1,25 @@
 import pygame
 from settings import *
-from utils.sprite_sheet import SpriteLoader
+from utils.sprite_sheet import ResourceLoader  # Изменено с SpriteLoader на ResourceLoader
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.sprites = SpriteLoader()
+        self.sprites = ResourceLoader()  # Изменено с SpriteLoader на ResourceLoader
         self.animation_state = 'idle'
         self.animation_frame = 0
         self.animation_timer = 0
-        self.facing_right = True  # Для отражения спрайта
+        self.facing_right = True
 
         # Загружаем анимации
         self.animations = {
             'idle': self.sprites.get_player_animation('idle'),
             'walk': self.sprites.get_player_animation('walk'),
-            'jump': self.sprites.get_player_animation('jump'),
-            'fall': self.sprites.get_player_animation('fall')
+            'jump': [self.sprites.get_player_animation('jump')] if not isinstance(
+                self.sprites.get_player_animation('jump'), list) else self.sprites.get_player_animation('jump'),
+            'fall': [self.sprites.get_player_animation('fall')] if not isinstance(
+                self.sprites.get_player_animation('fall'), list) else self.sprites.get_player_animation('fall')
         }
 
         # Устанавливаем начальное изображение

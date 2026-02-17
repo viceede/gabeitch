@@ -1,4 +1,5 @@
 import pygame
+import os
 
 # --- настройки окна ---
 WIDTH, HEIGHT = 800, 480
@@ -24,6 +25,16 @@ GRAVITY = 0.6
 
 # --- платформы, монеты, враги ---
 GROUND_HEIGHT = 60
+
+# --- пути к ресурсам ---
+BASE_PATH = os.path.dirname(__file__)
+ASSETS_PATH = os.path.join(BASE_PATH, 'assets')
+SPRITES_PATH = os.path.join(ASSETS_PATH, 'sprites')
+BACKGROUNDS_PATH = os.path.join(ASSETS_PATH, 'backgrounds')
+
+# --- фоновые изображения ---
+GAME_BACKGROUND = os.path.join(BACKGROUNDS_PATH, 'game_background.png')
+MENU_BACKGROUND = os.path.join(BACKGROUNDS_PATH, 'menu_background.png')
 
 # Инициализация pygame (для шрифтов)
 pygame.init()

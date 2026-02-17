@@ -1,12 +1,12 @@
 import pygame
 from settings import *
-from utils.sprite_sheet import SpriteLoader
+from utils.sprite_sheet import ResourceLoader  # Изменено с SpriteLoader на ResourceLoader
 
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, left_bound, right_bound, speed=2):
         super().__init__()
-        self.sprites = SpriteLoader()
+        self.sprites = ResourceLoader()  # Изменено с SpriteLoader на ResourceLoader
         self.animation_state = 'idle'
         self.animation_frame = 0
         self.animation_timer = 0
@@ -36,7 +36,7 @@ class Enemy(pygame.sprite.Sprite):
             self.animation_state = 'idle'
 
         # Обновляем кадр
-        if self.animation_timer >= 15:  # Медленнее чем игрок
+        if self.animation_timer >= 15:
             self.animation_timer = 0
             frames = self.animations[self.animation_state]
             self.animation_frame = (self.animation_frame + 1) % len(frames)

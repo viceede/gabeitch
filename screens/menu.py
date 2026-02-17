@@ -3,11 +3,16 @@ import sys
 from settings import *
 from classes import Button
 from utils import show_rules
+from utils.sprite_sheet import ResourceLoader  # Изменено с SpriteLoader на ResourceLoader
 
 
 def main_menu():
     """Главное меню игры"""
-    from main import WIN, CLOCK  # Импортируем из main
+    from main import WIN, CLOCK
+
+    # Загружаем ресурсы
+    resources = ResourceLoader()
+    background = resources.get_background('menu')
 
     menu_font = pygame.font.SysFont(None, 48)
     small_font = pygame.font.SysFont(None, 28)
@@ -51,11 +56,17 @@ def main_menu():
                 pygame.quit()
                 sys.exit()
 
-        # Отрисовка
-        WIN.fill(SKY_BLUE)
+        # Отрисовка фона
+        WIN.blit(background, (0, 0))
+
+        # Полупрозрачный overlay
+        overlay = pygame.Surface((WIDTH, HEIGHT))
+        overlay.set_alpha(128)
+        overlay.fill(BLACK)
+        WIN.blit(overlay, (0, 0))
 
         # Заголовок игры
-        title_text = title_font.render("Gabeitch", True, BLUE)
+        title_text = title_font.render("Gabeitch", True, YELLOW)
         title_rect = title_text.get_rect(center=(WIDTH // 2, 80))
         WIN.blit(title_text, title_rect)
 
@@ -64,23 +75,23 @@ def main_menu():
             show_rules(WIN, small_font, 150)
         else:
             # Краткое описание под заголовком
-            subtitle_text = small_font.render("Платформер с монетами и врагами", True, BLACK)
+            subtitle_text = small_font.render("Платформер с монетами и врагами", True, WHITE)
             subtitle_rect = subtitle_text.get_rect(center=(WIDTH // 2, 140))
             WIN.blit(subtitle_text, subtitle_rect)
 
-            # Отрисовка кнопок главного меню
+            # Отрисовка кнопок
             start_button.draw(WIN, menu_font)
             rules_button.draw(WIN, menu_font)
             quit_button.draw(WIN, menu_font)
 
-            # Краткие правила под кнопками
+            # Краткие правила
             quick_rules = [
                 "• Главная цель: Убить врага (прыжком сверху)",
                 "• Монеты - дополнительные очки",
                 "• У вас 3 жизни"
             ]
             for i, rule in enumerate(quick_rules):
-                rule_text = small_font.render(rule, True, BLACK)
+                rule_text = small_font.render(rule, True, WHITE)
                 WIN.blit(rule_text, (WIDTH // 2 - 150, 460 + i * 25))
 
         pygame.display.flip()
