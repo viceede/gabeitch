@@ -2,7 +2,7 @@ import pygame
 from settings import *
 from classes import Player, Platform, Enemy, Coin
 from utils import show_message
-from utils.sprite_sheet import ResourceLoader  # Изменено с SpriteLoader на ResourceLoader
+from utils.sprite_sheet import ResourceLoader
 
 
 def create_game_objects():
@@ -60,9 +60,6 @@ def game_loop():
 
     player, platforms, enemies, coins, all_sprites = create_game_objects()
 
-    font = pygame.font.SysFont(None, 28)
-    victory_font = pygame.font.SysFont(None, 72)
-
     victory = False
     game_over = False
 
@@ -90,8 +87,8 @@ def game_loop():
 
         if game_over:
             WIN.fill(BLACK)
-            show_message(WIN, "GAME OVER", RED, 72, -30)
-            show_message(WIN, "Нажмите R для рестарта или Esc для меню", WHITE, 28, 30)
+            show_message(WIN, "GAME OVER", RED, FONT_LARGE, -30)
+            show_message(WIN, "R - рестарт | ESC - меню", WHITE, FONT_MEDIUM, 20)
             pygame.display.flip()
             continue
 
@@ -105,12 +102,12 @@ def game_loop():
             s.fill((0, 0, 0, 128))
             WIN.blit(s, (0, 0))
 
-            victory_text = victory_font.render("ПОБЕДА!", True, YELLOW)
-            victory_rect = victory_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 40))
+            victory_text = FONT_TITLE.render("ПОБЕДА!", True, YELLOW)
+            victory_rect = victory_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 30))
             WIN.blit(victory_text, victory_rect)
 
-            show_message(WIN, f"Монет собрано: {player.coins_collected}", WHITE, 36, 20)
-            show_message(WIN, "Нажмите R для рестарта или Esc для меню", WHITE, 24, 60)
+            show_message(WIN, f"Монет: {player.coins_collected}", WHITE, FONT_LARGE, 20)
+            show_message(WIN, "R - рестарт | ESC - меню", WHITE, FONT_MEDIUM, 50)
 
             pygame.display.flip()
             continue
@@ -123,32 +120,34 @@ def game_loop():
         WIN.blit(background, (0, 0))
         all_sprites.draw(WIN)
 
-        # HUD
-        coins_text = font.render(f"Монеты: {player.coins_collected}", True, BLACK)
-        lives_text = font.render(f"Жизни: {player.lives}", True, BLACK)
-        coins_left_text = font.render(f"Осталось монет: {len(coins)}", True, BLACK)
-        enemies_left_text = font.render(f"Врагов: {len(enemies)}", True, BLACK)
-        total_text = font.render(f"Всего очков: {player.total_score}", True, BLACK)
-        menu_hint = font.render("ESC - меню", True, BLACK)
+        # HUD - компактнее
+        hud_font = FONT_HUD
 
-        # Полупрозрачный фон для HUD
-        hud_bg = pygame.Surface((200, 130))
+        coins_text = hud_font.render(f"Монеты: {player.coins_collected}", True, BLACK)
+        lives_text = hud_font.render(f"Жизни: {player.lives}", True, BLACK)
+        coins_left = hud_font.render(f"Ост: {len(coins)}", True, BLACK)
+        enemies_left = hud_font.render(f"Враги: {len(enemies)}", True, BLACK)
+        total_text = hud_font.render(f"Очки: {player.total_score}", True, BLACK)
+        menu_hint = hud_font.render("ESC", True, BLACK)
+
+        # Компактный HUD
+        hud_bg = pygame.Surface((180, 100))
         hud_bg.set_alpha(180)
         hud_bg.fill((255, 255, 255))
         WIN.blit(hud_bg, (5, 5))
 
-        WIN.blit(coins_text, (10, 10))
-        WIN.blit(lives_text, (10, 35))
-        WIN.blit(coins_left_text, (10, 60))
-        WIN.blit(enemies_left_text, (10, 85))
-        WIN.blit(total_text, (10, 110))
+        WIN.blit(coins_text, (10, 8))
+        WIN.blit(lives_text, (10, 28))
+        WIN.blit(coins_left, (10, 48))
+        WIN.blit(enemies_left, (10, 68))
+        WIN.blit(total_text, (10, 88))
 
-        menu_hint_rect = menu_hint.get_rect(topright=(WIDTH - 10, 10))
-        menu_hint_bg = pygame.Surface((100, 25))
+        # ESC подсказка
+        menu_hint_bg = pygame.Surface((45, 20))
         menu_hint_bg.set_alpha(180)
         menu_hint_bg.fill((255, 255, 255))
-        WIN.blit(menu_hint_bg, (WIDTH - 110, 5))
-        WIN.blit(menu_hint, menu_hint_rect)
+        WIN.blit(menu_hint_bg, (WIDTH - 55, 8))
+        WIN.blit(menu_hint, (WIDTH - 50, 8))
 
         pygame.display.flip()
 

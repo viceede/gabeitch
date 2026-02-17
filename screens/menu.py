@@ -3,7 +3,7 @@ import sys
 from settings import *
 from classes import Button
 from utils import show_rules
-from utils.sprite_sheet import ResourceLoader  # Изменено с SpriteLoader на ResourceLoader
+from utils.sprite_sheet import ResourceLoader
 
 
 def main_menu():
@@ -14,14 +14,10 @@ def main_menu():
     resources = ResourceLoader()
     background = resources.get_background('menu')
 
-    menu_font = pygame.font.SysFont(None, 48)
-    small_font = pygame.font.SysFont(None, 28)
-    title_font = pygame.font.SysFont(None, 72)
-
-    # Создание кнопок
-    start_button = Button(WIDTH // 2 - 100, 250, 200, 50, "Начать игру")
-    rules_button = Button(WIDTH // 2 - 100, 320, 200, 50, "Правила")
-    quit_button = Button(WIDTH // 2 - 100, 390, 200, 50, "Выйти")
+    # Создание кнопок (чуть меньше размер)
+    start_button = Button(WIDTH // 2 - 90, 240, 180, 40, "Начать игру")  # Было 200x50, стало 180x40
+    rules_button = Button(WIDTH // 2 - 90, 300, 180, 40, "Правила")
+    quit_button = Button(WIDTH // 2 - 90, 360, 180, 40, "Выйти")
 
     show_rules_screen = False
     running = True
@@ -65,34 +61,38 @@ def main_menu():
         overlay.fill(BLACK)
         WIN.blit(overlay, (0, 0))
 
-        # Заголовок игры
-        title_text = title_font.render("Gabeitch", True, YELLOW)
-        title_rect = title_text.get_rect(center=(WIDTH // 2, 80))
+        # Заголовок игры (желтым, большой)
+        title_text = FONT_TITLE.render("Gabeitch", True, YELLOW)
+        title_rect = title_text.get_rect(center=(WIDTH // 2, 70))  # Чуть выше
         WIN.blit(title_text, title_rect)
 
         if show_rules_screen:
             # Экран с правилами
-            show_rules(WIN, small_font, 150)
+            show_rules(WIN, 130)  # Начало правил чуть выше
         else:
             # Краткое описание под заголовком
-            subtitle_text = small_font.render("Платформер с монетами и врагами", True, WHITE)
-            subtitle_rect = subtitle_text.get_rect(center=(WIDTH // 2, 140))
+            subtitle_text = FONT_MEDIUM.render("Платформер с монетами", True, WHITE)
+            subtitle_rect = subtitle_text.get_rect(center=(WIDTH // 2, 120))
             WIN.blit(subtitle_text, subtitle_rect)
 
-            # Отрисовка кнопок
-            start_button.draw(WIN, menu_font)
-            rules_button.draw(WIN, menu_font)
-            quit_button.draw(WIN, menu_font)
+            subtitle_text2 = FONT_SMALL.render("и врагами", True, WHITE)
+            subtitle_rect2 = subtitle_text2.get_rect(center=(WIDTH // 2, 145))
+            WIN.blit(subtitle_text2, subtitle_rect2)
 
-            # Краткие правила
+            # Отрисовка кнопок
+            start_button.draw(WIN, FONT_MEDIUM)  # Используем MEDIUM для текста кнопок
+            rules_button.draw(WIN, FONT_MEDIUM)
+            quit_button.draw(WIN, FONT_MEDIUM)
+
+            # Краткие правила под кнопками
             quick_rules = [
-                "• Главная цель: Убить врага (прыжком сверху)",
-                "• Монеты - дополнительные очки",
-                "• У вас 3 жизни"
+                "• Цель: Убить врага",
+                "• Монеты - бонус",
+                "• 3 жизни"
             ]
             for i, rule in enumerate(quick_rules):
-                rule_text = small_font.render(rule, True, WHITE)
-                WIN.blit(rule_text, (WIDTH // 2 - 150, 460 + i * 25))
+                rule_text = FONT_SMALL.render(rule, True, WHITE)
+                WIN.blit(rule_text, (WIDTH // 2 - 100, 420 + i * 22))  # Выше и компактнее
 
         pygame.display.flip()
         CLOCK.tick(FPS)

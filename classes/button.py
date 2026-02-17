@@ -1,5 +1,5 @@
 import pygame
-from settings import GRAY, DARK_GRAY, WHITE
+from settings import GRAY, DARK_GRAY, WHITE, FONT_MEDIUM
 
 
 class Button:
@@ -13,7 +13,11 @@ class Button:
         self.text_color = text_color
         self.is_hovered = False
 
-    def draw(self, screen, font):
+    def draw(self, screen, font=None):
+        """Рисует кнопку с текстом"""
+        if font is None:
+            font = FONT_MEDIUM
+
         # Изменяем цвет при наведении
         color = self.hover_color if self.is_hovered else self.color
         pygame.draw.rect(screen, color, self.rect)

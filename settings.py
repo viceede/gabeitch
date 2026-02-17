@@ -31,14 +31,40 @@ BASE_PATH = os.path.dirname(__file__)
 ASSETS_PATH = os.path.join(BASE_PATH, 'assets')
 SPRITES_PATH = os.path.join(ASSETS_PATH, 'sprites')
 BACKGROUNDS_PATH = os.path.join(ASSETS_PATH, 'backgrounds')
+FONTS_PATH = os.path.join(ASSETS_PATH, 'fonts')
 
 # --- фоновые изображения ---
 GAME_BACKGROUND = os.path.join(BACKGROUNDS_PATH, 'game_background.png')
 MENU_BACKGROUND = os.path.join(BACKGROUNDS_PATH, 'menu_background.png')
 
-# Инициализация pygame (для шрифтов)
+# --- шрифты ---
+FONT_REGULAR = os.path.join(FONTS_PATH, 'Planes_ValMore.ttf')
+FONT_BOLD = os.path.join(FONTS_PATH, 'Planes_ValMore.ttf')
+
+# Инициализация pygame
 pygame.init()
-FONT_SMALL = pygame.font.SysFont(None, 28)
-FONT_MEDIUM = pygame.font.SysFont(None, 36)
-FONT_LARGE = pygame.font.SysFont(None, 48)
-FONT_TITLE = pygame.font.SysFont(None, 72)
+
+# Функция для загрузки шрифта с запасным вариантом
+def load_font(size, bold=False):
+    """Загружает шрифт, если есть, иначе использует системный"""
+    font_path = FONT_BOLD if bold else FONT_REGULAR
+    try:
+        if os.path.exists(font_path):
+            return pygame.font.Font(font_path, size)
+        else:
+            print(f"Шрифт не найден: {font_path}, используется системный")
+            return pygame.font.SysFont(None, size)
+    except:
+        return pygame.font.SysFont(None, size)
+
+# Уменьшаем все шрифты в 1.5 раза (кроме заголовка)
+# Было: 24, 32, 48, 72, 28
+# Стало: 16, 22, 32, 72, 20
+
+FONT_SMALL = load_font(16)      # Было 24 -> 16
+FONT_MEDIUM = load_font(22)     # Было 32 -> 22
+FONT_LARGE = load_font(32)      # Было 48 -> 32
+FONT_TITLE = load_font(72, bold=True)  # Заголовок оставляем 72
+FONT_HUD = load_font(20)        # Было 28 -> 20
+
+print(f"Шрифты загружены: SMALL=16, MEDIUM=22, LARGE=32, TITLE=72, HUD=20")
