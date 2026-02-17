@@ -19,14 +19,7 @@ __pycache__/
 build/
 dist/
 Gabeitch.spec
-
-# Ресурсы, создаваемые скриптами
-assets/backgrounds/
-assets/sprites/objects/
-assets/sprites/platforms/
-assets/sprites/coin/*.png
-assets/sprites/player/*.png
-assets/sprites/enemy/*.png
+output/
 
 # Файлы IDE
 .vscode/
