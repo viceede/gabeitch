@@ -46,11 +46,13 @@ class Player(pygame.sprite.Sprite):
 
     def handle_input(self, keys):
         self.vel_x = 0
-        if keys[pygame.K_LEFT]:
+        # Управление на WASD
+        if keys[pygame.K_a]:  # Влево
             self.vel_x = -PLAYER_SPEED
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_d]:  # Вправо
             self.vel_x = PLAYER_SPEED
-        if keys[pygame.K_SPACE] and self.on_ground:
+        # Прыжок на пробел (можно также добавить W для прыжка)
+        if (keys[pygame.K_SPACE] or keys[pygame.K_w]) and self.on_ground:
             self.vel_y = JUMP_POWER
             self.on_ground = False
 
@@ -161,6 +163,19 @@ def show_message(screen, message, color, size=48, y_offset=0):
     text = font.render(message, True, color)
     text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + y_offset))
     screen.blit(text, text_rect)
+
+
+def show_controls(screen, font):
+    """Отображает подсказку по управлению"""
+    controls = [
+        "Управление:",
+        "A / D - движение влево/вправо",
+        "W / Пробел - прыжок"
+    ]
+    y_offset = HEIGHT - 80
+    for i, text in enumerate(controls):
+        control_text = font.render(text, True, BLACK)
+        screen.blit(control_text, (10, y_offset + i * 20))
 
 
 def main():
@@ -274,6 +289,9 @@ def main():
         WIN.blit(lives_text, (10, 35))
         WIN.blit(coins_left_text, (10, 60))
         WIN.blit(enemies_left_text, (10, 85))
+
+        # Отображение подсказки по управлению
+        show_controls(WIN, font)
 
         pygame.display.flip()
 
