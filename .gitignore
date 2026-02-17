@@ -1,24 +1,42 @@
+# Виртуальное окружение
+venv/
+env/
+ENV/
+.venv/
 
+# Файлы сборки
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.so
+*.dll
+*.exe
+*.manifest
 *.spec
 
-
-venv/
-env/
-ENV/
-
-
+# Папки сборки
 build/
 dist/
-*.exe
+Gabeitch.spec
 
+# Ресурсы, создаваемые скриптами
+assets/backgrounds/
+assets/sprites/objects/
+assets/sprites/platforms/
+assets/sprites/coin/*.png
+assets/sprites/player/*.png
+assets/sprites/enemy/*.png
 
-github_config.json
+# Файлы IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Логи
 *.log
 
-
+# Системные файлы
 .DS_Store
 Thumbs.db
