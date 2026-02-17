@@ -125,7 +125,7 @@ def game_loop():
 
         coins_text = hud_font.render(f"Монеты: {player.coins_collected}", True, BLACK)
         lives_text = hud_font.render(f"Жизни: {player.lives}", True, BLACK)
-        coins_left = hud_font.render(f"Ост: {len(coins)}", True, BLACK)
+        coins_left = hud_font.render(f"Ост. монет: {len(coins)}", True, BLACK)
         enemies_left = hud_font.render(f"Враги: {len(enemies)}", True, BLACK)
         total_text = hud_font.render(f"Очки: {player.total_score}", True, BLACK)
         menu_hint = hud_font.render("ESC", True, BLACK)
