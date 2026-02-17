@@ -11,9 +11,15 @@ class Player(pygame.sprite.Sprite):
         self.vel_y = 0
         self.on_ground = False
         self.lives = 3
-        self.score = 0
+        self.coins_collected = 0  # Только монеты
+        self.bonus_points = 0      # Бонусные очки за убийство врагов
         self.start_x = x
         self.start_y = y
+
+    @property
+    def total_score(self):
+        """Общий счет = монеты + бонусы"""
+        return self.coins_collected + self.bonus_points
 
     def handle_input(self, keys):
         self.vel_x = 0
@@ -64,7 +70,7 @@ class Player(pygame.sprite.Sprite):
             if self.vel_y > 0 and self.rect.bottom <= enemy.rect.centery + 10:
                 enemy.kill()
                 self.vel_y = JUMP_POWER / 1.5
-                self.score += 5  # бонус за убийство врага
+                self.bonus_points += 5  # Бонус за убийство врага (отдельно)
             else:
                 # иначе теряем жизнь и откатываемся
                 self.lives -= 1
@@ -74,7 +80,7 @@ class Player(pygame.sprite.Sprite):
         # сбор монет
         coin_hit_list = pygame.sprite.spritecollide(self, coins, True)
         for _ in coin_hit_list:
-            self.score += 1
+            self.coins_collected += 1  # Только монеты
 
     def collide_x(self, platforms):
         for p in platforms:

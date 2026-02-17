@@ -4,11 +4,14 @@ from classes import Player, Platform, Enemy, Coin
 from utils import show_message
 
 
-def game_loop():
-    """Основной игровой цикл"""
-    from main import WIN, CLOCK  # Импортируем из main
-
+def create_game_objects():
+    """Создает все игровые объекты для нового запуска"""
+    # Создаем НОВОГО игрока с начальными параметрами
     player = Player(100, HEIGHT - GROUND_HEIGHT - PLAYER_HEIGHT)
+    # Убеждаемся, что счет точно равен 0
+    player.coins_collected = 0
+    player.bonus_points = 0
+    player.lives = 3
 
     platforms = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
@@ -45,6 +48,19 @@ def game_loop():
 
     all_sprites.add(player)
 
+    return player, platforms, enemies, coins, all_sprites
+
+
+def game_loop():
+    """Основной игровой цикл"""
+    from main import WIN, CLOCK
+
+    # Создаем все игровые объекты
+    player, platforms, enemies, coins, all_sprites = create_game_objects()
+
+    # Для отладки
+    print(f"Новая игра: жизни={player.lives}, монет=0, бонусов=0, всего монет в уровне={len(coins)}")
+
     font = pygame.font.SysFont(None, 28)
     victory_font = pygame.font.SysFont(None, 72)
 
@@ -61,11 +77,13 @@ def game_loop():
                 if event.key == pygame.K_ESCAPE:
                     return "menu"
                 if event.key == pygame.K_r and (game_over or victory):
+                    print(f"Рестарт: монет={player.coins_collected}, бонусов={player.bonus_points}")
                     return "restart"
 
         # Проверка условий победы (главное условие - убийство врага)
         if len(enemies) == 0 and not victory and player.lives > 0:
             victory = True
+            print(f"ПОБЕДА! Монет собрано: {player.coins_collected}, Бонусов: {player.bonus_points}")
 
         # Проверка поражения
         if player.lives <= 0:
@@ -90,7 +108,12 @@ def game_loop():
             victory_rect = victory_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 40))
             WIN.blit(victory_text, victory_rect)
 
-            show_message(WIN, f"Монет собрано: {player.score}", WHITE, 36, 20)
+            # Показываем только количество собранных монет
+            show_message(WIN, f"Монет собрано: {player.coins_collected}", WHITE, 36, 20)
+
+            # Дополнительно показываем бонусные очки (опционально)
+            # show_message(WIN, f"Бонус: {player.bonus_points}", WHITE, 24, 50)
+
             show_message(WIN, "Нажмите R для рестарта или Esc для меню", WHITE, 24, 60)
 
             pygame.display.flip()
@@ -105,16 +128,18 @@ def game_loop():
         all_sprites.draw(WIN)
 
         # HUD
-        score_text = font.render(f"Монеты: {player.score}", True, BLACK)
+        coins_text = font.render(f"Монеты: {player.coins_collected}", True, BLACK)
         lives_text = font.render(f"Жизни: {player.lives}", True, BLACK)
         coins_left_text = font.render(f"Осталось монет: {len(coins)}", True, BLACK)
         enemies_left_text = font.render(f"Врагов: {len(enemies)}", True, BLACK)
+        total_text = font.render(f"Всего очков: {player.total_score}", True, BLACK)
         menu_hint = font.render("ESC - меню", True, BLACK)
 
-        WIN.blit(score_text, (10, 10))
+        WIN.blit(coins_text, (10, 10))
         WIN.blit(lives_text, (10, 35))
         WIN.blit(coins_left_text, (10, 60))
         WIN.blit(enemies_left_text, (10, 85))
+        WIN.blit(total_text, (10, 110))
 
         menu_hint_rect = menu_hint.get_rect(topright=(WIDTH - 10, 10))
         WIN.blit(menu_hint, menu_hint_rect)

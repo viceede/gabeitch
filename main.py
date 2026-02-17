@@ -26,14 +26,18 @@ def main():
         if menu_result == "quit":
             break
         elif menu_result == "start":
+            # При старте игры всегда создаем новый цикл с новыми объектами
             game_result = game_loop()
 
+            # Обрабатываем результат игры
             while game_result == "restart":
+                # При рестарте просто запускаем новый игровой цикл
+                # Каждый новый game_loop создает свежие объекты через create_game_objects()
                 game_result = game_loop()
 
             if game_result == "quit":
                 break
-            # Если "menu" - возвращаемся в главное меню
+            # Если "menu" - возвращаемся в главное меню (продолжаем внешний цикл)
 
     pygame.quit()
     sys.exit()
